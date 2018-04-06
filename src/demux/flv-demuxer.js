@@ -498,6 +498,17 @@ class FLVDemuxer {
                 return;
             }
 
+            // Imitate an AAC sequence header
+            // If a valid one is received, this will be overwritten anyway
+            if (!meta.config) {
+                aacData.packetType = 0;
+                aacData.data.samplingRate = 48000;
+                aacData.data.channelCount = 1;
+                aacData.data.codec = "mp4a.40.2";
+                aacData.data.originalCodec = "mp4a.40.2";
+                aacData.data.config = [17, 392];
+            }
+
             if (aacData.packetType === 0) {  // AAC sequence header (AudioSpecificConfig)
                 if (meta.config) {
                     Log.w(this.TAG, 'Found another AudioSpecificConfig!');
